@@ -13,7 +13,7 @@
 #-------------------------------------------------------------------------------------------------------
 
 # Workflow name which is showed in GitHub Actions.
-name: Build ssr
+name: Build Example-Firmware for Example-Device
 
 on:
   workflow_dispatch:

@@ -19,9 +19,9 @@ on:
   workflow_dispatch:
     inputs:
       force-build:
-        description: "Build new ssr"
+        description: "Build new ssr push"
         required: false
-        default: "false"
+        default: "true"
       ssh:
         description: "SSH connection to Actions"
         required: false

@@ -12,7 +12,7 @@
 #-------------------------------------------------------------------------------------------------------
 
 # Workflow name which is shown in GitHub Actions.
-name: Build v3 (Stable Release)
+name: AiBuild v3 (Stable Release)
 
 on:
   workflow_dispatch:

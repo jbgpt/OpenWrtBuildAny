@@ -82,7 +82,7 @@ jobs:
 
       - name: Compare Commit Hash
         id: cache-hash
-        uses: actions/cache@v3
+        uses: actions/cache@main
         with:
           path: .${{ env.REPO_NAME }}-${{ env.REPO_BRANCH }}-commit-hash
           key: HEAD-${{ steps.get-hash.outputs.commit-hash }}
@@ -103,7 +103,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@main
+        uses: actions/checkout@v3
 
       - name: Free disk space
         uses: jlumbroso/free-disk-space@main

@@ -95,6 +95,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      # 第三步：使用 `latest-tag` 环境变量
+      - name: Use Latest Tag
+        run: |
+          echo "The latest tag is ${{ env.latest-tag }}"
+          echo "Latest tag retrieved and stored in ENV is: $LATEST_TAG"
       - name: Free disk space
         uses: jlumbroso/free-disk-space@main
         with:
@@ -127,7 +132,9 @@ jobs:
            echo "No tags found in the repository."
            exit 1
           fi
-          git clone --depth 1 --branch ${{ steps.get-latest-tag.outputs.latest-tag }} --single-branch ${{ env.REPO_URL }} openwrt/
+          git clone --depth 1 --branch v24.10.1 --single-branch ${{ env.REPO_URL }} openwrt/
+          
+          #git clone --depth 1 --branch ${{ steps.get-latest-tag.outputs.latest-tag }} --single-branch ${{ env.REPO_URL }} openwrt/
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
       - name: Run custom-script-1

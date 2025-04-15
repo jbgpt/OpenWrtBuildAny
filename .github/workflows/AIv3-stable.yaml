@@ -65,7 +65,8 @@ jobs:
       - name: Clone source code with latest stable tag
         id: clone-repo
         run: |
-          git clone --depth 1 --branch ${{ env.LATEST_TAG }} --single-branch ${{ env.REPO_URL }} ./
+          #git clone --depth 1 --branch ${{ env.LATEST_TAG }} --single-branch ${{ env.REPO_URL }} ./
+          git clone --depth 1 --branch v24.10.1 --single-branch ${{ env.REPO_URL }} ./
           echo "commit-hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
       - name: Compare Commit Hash

@@ -58,7 +58,13 @@ jobs:
         run: |
           #LATEST_TAG=$(git ls-remote --tags --sort="v:refname" ${{ env.REPO_URL }} | tail -n1 | sed 's/.*\/\(.*\)/\1/')
           LATEST_TAG=$(git ls-remote --tags --sort="v:refname" ${{ env.REPO_URL }} | grep -v '{}' | tail -n1 | sed 's/.*\/\(.*\)/\1/')
-          echo $LATEST_TAG
+          # 去除换行符和空格
+           LATEST_TAG=$(echo $LATEST_TAG | tr -d '\n' | tr -d '\r')
+           # 调试输出
+           echo "Latest Tag: $LATEST_TAG"
+          # 设置环境变量和 GitHub 输出
+           echo "latest-tag=$LATEST_TAG" >> $GITHUB_ENV
+           echo "latest-tag=$LATEST_TAG" >> $GITHUB_OUTPUT
           echo "latest-tag=$LATEST_TAG" >> $GITHUB_ENV
           echo "latest-tag=$LATEST_TAG" >> $GITHUB_OUTPUT
 
@@ -94,7 +100,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
+         if [ -z "$LATEST_TAG" ]; then
+           echo "No tags found in the repository."
+           exit 1
+          fi
       # 第三步：使用 `latest-tag` 环境变量
       - name: Use Latest Tag
         run: |
@@ -128,13 +137,10 @@ jobs:
         working-directory: /workdir
         run: |
           df -hT $PWD
-          if [ -z "$LATEST_TAG" ]; then
-           echo "No tags found in the repository."
-           exit 1
-          fi
-          git clone --depth 1 --branch v24.10.1 --single-branch ${{ env.REPO_URL }} openwrt/
           
-          #git clone --depth 1 --branch ${{ steps.get-latest-tag.outputs.latest-tag }} --single-branch ${{ env.REPO_URL }} openwrt/
+          #git clone --depth 1 --branch v24.10.1 --single-branch ${{ env.REPO_URL }} openwrt/
+          
+          git clone --depth 1 --branch ${{ steps.get-latest-tag.outputs.latest-tag }} --single-branch ${{ env.REPO_URL }} openwrt/
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
       - name: Run custom-script-1

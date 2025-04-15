@@ -58,7 +58,7 @@ jobs:
         run: |
           #LATEST_TAG=$(git ls-remote --tags --sort="v:refname" ${{ env.REPO_URL }} | tail -n1 | sed 's/.*\/\(.*\)/\1/')
           LATEST_TAG=$(git ls-remote --tags --sort="v:refname" ${{ env.REPO_URL }} | grep -v '{}' | tail -n1 | sed 's/.*\/\(.*\)/\1/')
-
+          echo $LATEST_TAG
           echo "latest-tag=$LATEST_TAG" >> $GITHUB_ENV
           echo "latest-tag=$LATEST_TAG" >> $GITHUB_OUTPUT
 

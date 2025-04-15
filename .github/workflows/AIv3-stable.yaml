@@ -74,7 +74,7 @@ jobs:
         id: cache-hash
         uses: actions/cache@main
         with:
-          path: .${{ env.REPO_NAME }}-${{ env.LATEST_TAG }}-commit-hash
+          path: .${{ env.REPO_NAME }}-${{ steps.get-latest-tag.outputs.latest-tag }}-commit-hash
           key: HEAD-${{ steps.clone-repo.outputs.commit-hash }}
 
       - name: Save New Commit Hash
@@ -123,7 +123,11 @@ jobs:
         working-directory: /workdir
         run: |
           df -hT $PWD
-          git clone --depth 1 --branch ${{ env.LATEST_TAG }} --single-branch ${{ env.REPO_URL }} openwrt/
+          if [ -z "$LATEST_TAG" ]; then
+           echo "No tags found in the repository."
+           exit 1
+          fi
+          git clone --depth 1 --branch ${{ steps.get-latest-tag.outputs.latest-tag }} --single-branch ${{ env.REPO_URL }} openwrt/
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
       - name: Run custom-script-1

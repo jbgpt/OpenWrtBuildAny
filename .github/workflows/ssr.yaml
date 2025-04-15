@@ -82,7 +82,7 @@ jobs:
 
       - name: Compare Commit Hash
         id: cache-hash
-        uses: actions/cache@main
+        uses: actions/cache@v3
         with:
           path: .${{ env.REPO_NAME }}-${{ env.REPO_BRANCH }}-commit-hash
           key: HEAD-${{ steps.get-hash.outputs.commit-hash }}

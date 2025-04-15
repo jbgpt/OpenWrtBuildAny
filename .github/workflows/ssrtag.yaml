@@ -33,7 +33,7 @@ env:
   FEEDS_CONF: ssr/feeds.conf.default
   REPO_NAME: openwrt-name
   REPO_URL: https://github.com/openwrt/openwrt.git
-  REPO_TAG: v24.10.0
+  REPO_TAG: v24.10.1
   CONFIG_FILE: ssr/ssr.config
   CUSTOM_SCRIPT_1: example-custom-script-1.sh
   CUSTOM_SCRIPT_2: example-custom-script-2.sh

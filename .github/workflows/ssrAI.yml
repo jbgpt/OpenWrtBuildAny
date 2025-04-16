@@ -92,6 +92,11 @@ jobs:
         run: |
           echo ${{ steps.get-hash.outputs.commit-hash }} | 
             tee .$REPO_NAME-$REPO_BRANCH-commit-hash
+# Step 2: 切换到指定版本的 tag
+      - name: Checkout specific version
+        run: |
+          git fetch --tags
+          git checkout tags/v24.10.0
 
   build:
     name: Build firmware

@@ -241,7 +241,11 @@ jobs:
         id: tag
         if: env.RELEASE_FIRMWARE == 'true' && !cancelled()
         run: |
-          echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
+          cd openwrt/ # 进入 openwrt 文件夹
+          version=$(git describe --tags || echo "no_tags-version") # 提取版本信息，使用 git describe
+          date=$(date +"%Y_%m_%d") # 提取当前日期
+          echo "release_tag=${version}-${date}" >> $GITHUB_OUTPUT # 设置 release_tag
+          #echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
           touch release.txt
           echo "Build from $REPO_URL $REPO_BRANCH" >> release.txt
           [ $COWTRANSFER_FIRMWARE = true -o $WETRANSFER_FIRMWARE = true ] && echo 'Products transfer:' >> release.txt
@@ -250,7 +254,19 @@ jobs:
           [ $WETRANSFER_FIRMWARE = true ] && echo \
             "🔗 [WeTransfer](${{ steps.wetransfer.outputs.url }})" >> release.txt
           echo "status=success" >> $GITHUB_OUTPUT
-
+      - name: Generate release tag
+        id: tag
+        if: env.RELEASE_FIRMWARE == 'true' && !cancelled()
+        run: |
+          
+          touch release.txt
+          echo "Build from $REPO_URL $REPO_BRANCH" >> release.txt
+          [ $COWTRANSFER_FIRMWARE = true -o $WETRANSFER_FIRMWARE = true ] && echo 'Products transfer:' >> release.txt
+          [ $COWTRANSFER_FIRMWARE = true ] && echo \
+            "🔗 [Cowtransfer](${{ steps.cowtransfer.outputs.url }})" >> release.txt
+          [ $WETRANSFER_FIRMWARE = true ] && echo \
+            "🔗 [WeTransfer](${{ steps.wetransfer.outputs.url }})" >> release.txt
+          echo "status=success" >> $GITHUB_OUTPUT
       - name: Upload firmware to release
         uses: softprops/action-gh-release@master
         if: steps.tag.outputs.status == 'success' && !cancelled()

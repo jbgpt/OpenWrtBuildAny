@@ -105,11 +105,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-# Step 2: 切换到指定版本的 tag
-      - name: Checkout specific version
-        run: |
-          git fetch --tags
-          git checkout tags/v24.10.0
+
       - name: Free disk space
         uses: jlumbroso/free-disk-space@main
         with:
@@ -139,6 +135,11 @@ jobs:
         run: |
           df -hT $PWD
           git clone --depth 1 --branch $REPO_BRANCH --single-branch $REPO_URL openwrt/
+     # Step 2: 切换到指定版本的 tag
+      - name: Checkout specific version
+        run: |
+          git fetch --tags
+          git checkout tags/v24.10.0     
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
       - name: Run custom-script-1

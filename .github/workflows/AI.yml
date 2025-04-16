@@ -1,0 +1,57 @@
+name: Build OpenWrt Firmware
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-openwrt:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: 检出代码仓库
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: 切换到指定版本的 tag
+      - name: Checkout specific version
+        run: |
+          git fetch --tags
+          git checkout tags/v24.10.0
+
+      # Step 3: 安装编译依赖
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libncurses5-dev gawk git gettext unzip file libssl-dev wget
+
+      # Step 4: 配置 OpenWrt 编译环境
+      - name: Configure OpenWrt build
+        run: |
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+          make defconfig
+
+      # Step 5: 编译固件
+      - name: Build firmware
+        run: |
+          make -j$(nproc)
+
+      # Step 6: 验证固件版本
+      - name: Verify firmware version
+        run: |
+          FIRMWARE_VERSION=$(cat ./bin/targets/*/*/version)
+          echo "Generated firmware version: $FIRMWARE_VERSION"
+          if [ "$FIRMWARE_VERSION" != "v24.10.0" ]; then
+            echo "Error: Firmware version does not match v24.10.0!"
+            exit 1
+          fi
+
+      # Step 7: 上传生成的固件到工作流的 artifact 中
+      - name: Upload firmware
+        uses: actions/upload-artifact@v3
+        with:
+          name: openwrt-firmware
+          path: ./bin/targets/

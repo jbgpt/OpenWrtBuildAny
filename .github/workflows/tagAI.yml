@@ -241,10 +241,10 @@ jobs:
         id: tag
         if: env.RELEASE_FIRMWARE == 'true' && !cancelled()
         run: |
-          cd openwrt/ # 进入 openwrt 文件夹
-          version=$(git describe --tags || echo "unknown-version") # 提取版本信息，使用 git describe
+          #cd openwrt/ # 进入 openwrt 文件夹
+          #version=$(git describe --tags || echo "unknown-version") # 提取版本信息，使用 git describe
           date=$(date +"%Y%m%d") # 提取当前日期
-          echo "release_tag=${version}-${date}" >> $GITHUB_OUTPUT # 设置 release_tag
+          echo "release_tag=${date}" >> $GITHUB_OUTPUT # 设置 release_tag
           touch release.txt
           echo "Build from $REPO_URL $REPO_BRANCH" >> release.txt
           [ $COWTRANSFER_FIRMWARE = true -o $WETRANSFER_FIRMWARE = true ] && echo 'Products transfer:' >> release.txt

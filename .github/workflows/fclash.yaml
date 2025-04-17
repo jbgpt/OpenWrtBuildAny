@@ -47,7 +47,7 @@ env:
       #             uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev clang file nano aria2"
   # CONFIG_FILE is the name of your own config files for compiling, you should upload these files into the root 
   # directory of your workflow repo.
-  CONFIG_FILE: ssr/clash.config
+  CONFIG_FILE: ssr/fclash.config
   # CUSTOM_SCRIPT_1 is the name of extra bash script you want to execute before feeds update&install.
   # CUSTOM_SCRIPT_2 is the name of extra bash script you want to execute after feeds update&install.
   # You can modify the initial settings of your firmware through these two scripts. If this is what you need,
@@ -141,7 +141,7 @@ jobs:
          # git clone --depth 1 --no-single-branch https://github.com/openwrt/openwrt.git
           cd openwrt
           git fetch --tags
-          git checkout tags/v24.10.0
+          git checkout tags/v24.10.1
       - name: Run custom-script-1
         run: |
           [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
@@ -245,7 +245,7 @@ jobs:
           version=$(git describe --tags || echo "unknown-version") # 提取版本信息，使用 git describe
           date=$(date +"%Y%m%d") # 提取当前日期
           cd $GITHUB_WORKSPACE #
-          echo "release_tag=${date}" >> $GITHUB_OUTPUT # 设置 release_tag
+          echo "release_tag=${date}_${version}" >> $GITHUB_OUTPUT # 设置 release_tag
           touch release.txt
           echo "Build from $REPO_URL $REPO_BRANCH" >> release.txt
           [ $COWTRANSFER_FIRMWARE = true -o $WETRANSFER_FIRMWARE = true ] && echo 'Products transfer:' >> release.txt

@@ -247,7 +247,7 @@ jobs:
           cd $GITHUB_WORKSPACE #
           echo "release_tag=${date}" >> $GITHUB_OUTPUT # 设置 release_tag
           touch release.txt
-          echo "Build from $REPO_URL $REPO_BRANCH" >> release.txt
+          echo "Build from $REPO_URL $CONFIG_FILE_ $REPO_BRANCH" >> release.txt
           [ $COWTRANSFER_FIRMWARE = true -o $WETRANSFER_FIRMWARE = true ] && echo 'Products transfer:' >> release.txt
           [ $COWTRANSFER_FIRMWARE = true ] && echo \
             "🔗 [Cowtransfer](${{ steps.cowtransfer.outputs.url }})" >> release.txt

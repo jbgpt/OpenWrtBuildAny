@@ -16,4 +16,4 @@
 #patch content
 #EOF
 #git apply example.patch
-
+#echo "net.core.default_qdisc=fq" >> package/base-files/files/etc/sysctl.conf

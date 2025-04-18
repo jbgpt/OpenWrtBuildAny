@@ -34,7 +34,7 @@ env:
   # REPO means the OpenWrt repo you want to build from in this workflow. 
   # You can modify the REPO_NAME to any name you want, but remember not to let it have the same name in 
   # other workflows.
-  FEEDS_CONF: ssr/passR.feeds.default
+  FEEDS_CONF: ssr/feeds.conf.default
   REPO_NAME: openwrt-name
   REPO_URL: https://github.com/openwrt/openwrt.git
   REPO_BRANCH: openwrt-24.10

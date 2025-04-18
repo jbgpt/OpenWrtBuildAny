@@ -245,7 +245,7 @@ jobs:
           version=$(git describe --tags || echo "unknown-version") # 提取版本信息，使用 git describe
           date=$(date +"%Y%m%d") # 提取当前日期
           cd $GITHUB_WORKSPACE #
-          echo "release_tag=${date}_${version}" >> $GITHUB_OUTPUT # 设置 release_tag
+          echo "release_tag=${date}-$CONFIG_FILE-${version}" >> $GITHUB_OUTPUT # 设置 release_tag
           touch release.txt
           echo "Build from $REPO_URL $REPO_BRANCH" >> release.txt
           [ $COWTRANSFER_FIRMWARE = true -o $WETRANSFER_FIRMWARE = true ] && echo 'Products transfer:' >> release.txt

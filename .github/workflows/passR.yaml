@@ -13,7 +13,7 @@
 #-------------------------------------------------------------------------------------------------------
 
 # Workflow name which is showed in GitHub Actions.
-name: Build fclash
+name: Build passR
 
 on:
   workflow_dispatch:

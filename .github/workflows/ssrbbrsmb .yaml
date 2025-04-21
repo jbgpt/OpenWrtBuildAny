@@ -13,7 +13,7 @@
 #-------------------------------------------------------------------------------------------------------
 
 # Workflow name which is showed in GitHub Actions.
-name: Build passR
+name: Build ssrbbrsmb
 
 on:
   workflow_dispatch:

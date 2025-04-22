@@ -77,15 +77,27 @@ jobs:
       cache-hit: ${{ steps.cache-hash.outputs.cache-hit }}
 
     steps:
-      - name: Get Commit Hash
-        id: get-hash
-        run: |
-          git clone --depth 1 --branch $REPO_BRANCH --single-branch $REPO_URL ./
-          echo "commit-hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-
+      #- name: Get Commit Hash
+        #id: get-hash
+        #run: |
+         # git clone --depth 1 --branch $REPO_BRANCH --single-branch $REPO_URL ./
+          #echo "commit-hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+      - name: Get Commit Hash (Conditional)
+  id: get-hash
+  run: |
+    # 如果有输入参数，优先使用输入值；否则自动获取
+    if [ -n "$CUSTOM_HASH" ]; then
+      echo "Using custom hash: $CUSTOM_HASH"
+      echo "commit-hash=$CUSTOM_HASH" >> $GITHUB_OUTPUT
+    else
+      git clone --depth 1 --branch $REPO_BRANCH --single-branch $REPO_URL ./
+      echo "commit-hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+    fi
+  env:
+    CUSTOM_HASH: ${{ inputs.custom_hash || vars.CUSTOM_HASH }} # 多来源支持
       - name: Compare Commit Hash
         id: cache-hash
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: .${{ env.REPO_NAME }}-${{ env.REPO_BRANCH }}-commit-hash
           key: HEAD-${{ steps.get-hash.outputs.commit-hash }}

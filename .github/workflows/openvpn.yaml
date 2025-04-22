@@ -22,6 +22,10 @@ on:
         description: "Build new ssr push"
         required: false
         default: "true"
+      custom_hash:
+        description: '输入自定义提交哈希'
+        required: false
+        type: string
       ssh:
         description: "SSH connection to Actions"
         required: false

@@ -42,6 +42,7 @@ modify_kernel_version() {
     cat <<EOF > include/kernel-version.mk
 LINUX_VERSION-6.6 = .73
 LINUX_VERSION_CODE = 6.6.73
+#LINUX_RELEASE = 3abe85def815b59c6c75ac1f92135cb6
 LINUX_RELEASE = 3abe85def815b59c6c75ac1f92135cb6
 EOF
 }

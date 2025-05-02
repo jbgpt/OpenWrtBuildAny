@@ -36,3 +36,15 @@
 #EOF
 #git apply example.patch
 
+# 修改 kernel-version.mk 文件
+modify_kernel_version() {
+    echo "Modifying kernel-version.mk..."
+    cat <<EOF > include/kernel-version.mk
+LINUX_VERSION-6.6 = .73
+LINUX_VERSION_CODE = 6.6.73
+LINUX_RELEASE = 3abe85def815b59c6c75ac1f92135cb6
+EOF
+}
+
+# 执行修改函数
+modify_kernel_version

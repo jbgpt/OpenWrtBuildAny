@@ -37,15 +37,9 @@
 #git apply example.patch
 
 # 修改 kernel-version.mk 文件
-modify_kernel_version() {
-    echo "Modifying kernel-version.mk..."
-    cat <<EOF > include/kernel-version.mk
-LINUX_VERSION-6.6 = .73
-LINUX_VERSION_CODE = 6.6.73
-#LINUX_RELEASE = 3abe85def815b59c6c75ac1f92135cb6
-LINUX_RELEASE = 3abe85def815b59c6c75ac1f92135cb6
-EOF
-}
 
-# 执行修改函数
-modify_kernel_version
+
+# 替换 kernel-version.mk 的内核版本
+#sed -i 's/LINUX_VERSION-6.6 = .*/LINUX_VERSION-6.6 = .73/' include/kernel-version.mk
+#sed -i 's/LINUX_VERSION_CODE = .*/LINUX_VERSION_CODE = 6.6.73/' include/kernel-version.mk
+sed -i 's/LINUX_RELEASE = .*/LINUX_RELEASE = 3abe85def815b59c6c75ac1f92135cb6/' include/kernel-version.mk

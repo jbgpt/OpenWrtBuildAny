@@ -133,7 +133,12 @@ jobs:
           large-packages: true
           docker-images: true
           swap-storage: false
-# 启用 BBR 的核心配置
+# 启用 BBR/bash 的核心配置
+# 启用 bash
+      - name: Enable Bash
+        run: |
+           echo"CONFIG_PACKAGE_bash=y" >> ${{ env.CONFIG_FILE }}
+           echo"CONFIG_TARGET_ROOTFS_ROOT_PASSWD="root:x:0:0:root:/root:/usr/bin/bash"" >> ${{ env.CONFIG_FILE }}
       - name: Enable BBR
         run: |
            echo "CONFIG_PACKAGE_kmod-tcp-bbr=y" >> ${{ env.CONFIG_FILE }}

@@ -1,4 +1,7 @@
 ## Workflows for building OpenWrt firmware
+24.10.1hash
+6.6.86-1-hash
+2a6d68f3ded425efc0850296e7f62d53
 
 This repository is improved base on **[P3TERX/Actions-OpenWrt](https://github.com/P3TERX/Actions-OpenWrt)**. Since the original repository has been archived and cannot submit PR, it is provided as a new repository.
 

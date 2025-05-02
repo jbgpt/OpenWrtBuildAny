@@ -178,16 +178,7 @@ jobs:
           chmod +x $CUSTOM_SCRIPT_1
           cd openwrt/
           $GITHUB_WORKSPACE/$CUSTOM_SCRIPT_1
-      - name: Modify Kernel Version
-          
-        run: |
-          cd openwrt/
-          # 修改 kernel-version.mk 文件
-          cat <<EOF > include/kernel-version.mk
-          LINUX_VERSION-6.6 = .73
-          LINUX_VERSION_CODE = 6.6.73
-          LINUX_RELEASE = 3abe85def815b59c6c75ac1f92135cb6
-          EOF
+      
       - name: Update feeds
         run: cd openwrt/ && ./scripts/feeds update -a
 

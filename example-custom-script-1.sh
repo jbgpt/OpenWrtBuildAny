@@ -27,7 +27,10 @@
 #sed -i 's/^#\(.*feed-name\)/\1/' feeds.conf.default
 # # Replace src-git-full with src-git to reduce the depth of cloning:
 #sed -i 's/src-git-full/src-git/g' feeds.conf.default
-#
+
+# Uncomment a feed source
+sed -i "/helloworld/d" "feeds.conf.default"
+echo "src-git helloworld https://github.com/fw876/helloworld.git" >> "feeds.conf.default
 # You can also modify the source code by patching.
 # # Here's a template for patching:
 #touch example.patch

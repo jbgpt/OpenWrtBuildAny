@@ -45,4 +45,4 @@ echo "src-git helloworld https://github.com/fw876/helloworld.git" >> "feeds.conf
 # 替换 kernel-version.mk 的内核版本
 #sed -i 's/LINUX_VERSION-6.6 = .*/LINUX_VERSION-6.6 = .73/' include/kernel-version.mk
 #sed -i 's/LINUX_VERSION_CODE = .*/LINUX_VERSION_CODE = 6.6.73/' include/kernel-version.mk
-sed -i 's/LINUX_RELEASE = .*/LINUX_RELEASE = 3abe85def815b59c6c75ac1f92135cb6/' include/kernel-version.mk
+#sed -i 's/LINUX_RELEASE = .*/LINUX_RELEASE = 3abe85def815b59c6c75ac1f92135cb6/' include/kernel-version.mk

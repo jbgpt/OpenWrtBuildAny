@@ -20,7 +20,7 @@ env:
   REPO_URL: https://github.com/openwrt/openwrt.git
   REPO_BRANCH: openwrt-24.10
   FEEDS_CONF: ssr/feeds.conf.default
-  CONFIG_FILE: ssr/clashax.config
+  CONFIG_FILE: ssr/clashsmart.config
   DIY_P1_SH: example-custom-script-1.sh
   DIY_P2_SH: example-custom-script-2.sh
   UPLOAD_BIN_DIR: false

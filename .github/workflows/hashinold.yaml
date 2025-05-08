@@ -68,11 +68,13 @@ jobs:
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
-    - name: Clone repository with 24.10.0 tags
-      run: |   
-        cd openwrt
-          git fetch --tags
-          git checkout tags/v24.10.1
+    - name: Fetch and checkout
+      run: |
+       cd openwrt
+       git fetch --tags
+       git fetch origin
+       git checkout tags/v24.10.1
+        git checkout 2a6d68f3ded425efc0850296e7f62d53
     - name: Load custom feeds
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default

@@ -161,6 +161,13 @@ jobs:
           df -hT $PWD
           git clone --depth 1 --branch $REPO_BRANCH --single-branch $REPO_URL openwrt/
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+      - name: Fetch and checkout
+        run: |
+          cd openwrt
+          git fetch --tags
+          git fetch origin
+          git checkout tags/v24.10.1
+           git checkout 2a6d68f3ded425efc0850296e7f62d53
      # - name: Clone repository with all tags
        # run: |
          # git clone --depth 1 --no-single-branch https://github.com/openwrt/openwrt.git

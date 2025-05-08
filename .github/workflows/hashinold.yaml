@@ -10,17 +10,17 @@
 # See /LICENSE for more information.
 #
 
-name: OpenWrt luci2303
+name: OpenWrt clashusb241
 
 on:
   repository_dispatch:
   workflow_dispatch:
 
 env:
-  REPO_URL: https://github.com/openwrt/openwrt
+  REPO_URL: https://github.com/openwrt/openwrt.git
   REPO_BRANCH: openwrt-24.10
-  FEEDS_CONF: luci2305feeds.conf.default
-  CONFIG_FILE: luci2305.config
+  FEEDS_CONF: ssrluci/feeds.conf.default
+  CONFIG_FILE: ssrluci/clashhhhh.config
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
   UPLOAD_BIN_DIR: false
@@ -30,12 +30,24 @@ env:
 
 jobs:
   build:
+    name: Build firmware
     runs-on: ubuntu-22.04
+   
+    permissions:
+      contents: write
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
-
+      uses: actions/checkout@main
+  # 启用 BBR 的核心配置
+    - name: Enable BBR
+      run: |
+           echo "CONFIG_PACKAGE_kmod-tcp-bbr=y" >> ${{ env.CONFIG_FILE }}
+           echo "CONFIG_DEFAULT_TCP_CONG=\"bbr\"" >> ${{ env.CONFIG_FILE }}
+          
+           echo "CONFIG_PACKAGE_kmod-sched-core=y" >> ${{ env.CONFIG_FILE }}
+           echo "CONFIG_PACKAGE_kmod-sched-fq_codel=y" >> ${{ env.CONFIG_FILE }}
+         
     - name: Initialization environment
       env:
         DEBIAN_FRONTEND: noninteractive
@@ -56,14 +68,11 @@ jobs:
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
-    - name: Clone repository with all tags
-      run: |
-         # git clone --depth 1 --no-single-branch https://github.com/openwrt/openwrt.git
-          cd openwrt
+    - name: Clone repository with 24.10.0 tags
+      run: |   
+        cd openwrt
           git fetch --tags
           git checkout tags/v24.10.1
-          git fetch origin
-          git checkout 2a6d68f3ded425efc0850296e7f62d53
     - name: Load custom feeds
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
@@ -139,4 +148,29 @@ jobs:
         echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
         touch release.txt
         [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
-       
+        echo "status=success" >> $GITHUB_OUTPUT
+
+    - name: Upload firmware to release
+      uses: softprops/action-gh-release@master
+      if: steps.tag.outputs.status == 'success' && !cancelled()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.tag.outputs.release_tag }}
+        body_path: release.txt
+        files: ${{ env.FIRMWARE }}/*
+
+    - name: Delete workflow runs
+      uses: Mattraks/delete-workflow-runs@main
+      with:
+        retain_days: 0
+        keep_minimum_runs: 2
+
+   # - name: Remove old Releases
+    #  uses: dev-drprasad/delete-older-releases@master
+     # if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      #with:
+       # keep_latest: 3
+        #delete_tags: true
+      #env:
+       # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

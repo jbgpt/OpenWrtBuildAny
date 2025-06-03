@@ -19,10 +19,13 @@ on:
   workflow_dispatch:
     inputs:
       force-build:
-        description: "Build v24.1"
+        description: "Build new v24.1"
         required: false
         default: "true"
-    
+      ssh:
+        description: "SSH connection to Actions"
+        required: false
+        default: "false"
 # Uncomment the following to run regularly. Note that the cron expression here does not contain seconds.
 #  schedule:
 #    - cron: 0 */18 * * *
@@ -35,16 +38,13 @@ env:
   REPO_NAME: openwrt-name
   REPO_URL: https://github.com/openwrt/openwrt.git
   REPO_BRANCH: openwrt-24.10
-  BUILD_DEPENDS: |
-    ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential
-    bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext
-    gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386
-    libelf-dev libwayland-dev libgraphene-1.0-dev libgl1-mesa-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev
-    libmpfr-dev libncurses5-dev libncursesw5-dev libpython3-dev libreadline-dev
-    libssl-dev libtool lrzsz mkisofs msmtp ninja-build p7zip p7zip-full patch
-    pkgconf python2.7 python3 python3-pyelftools python3-setuptools qemu-utils
-    rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim
-    wget xmlto xxd zlib1g-dev clang file nano aria2
+ # BUILD_DEPENDS:  "ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential \
+ #                  bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib \
+  #                 git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev \
+   #                libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libpython3-dev libreadline-dev \
+    #               libssl-dev libtool lrzsz mkisofs msmtp ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 \
+      #             python3-pyelftools python3-setuptools qemu-utils rsync scons squashfs-tools subversion swig texinfo \
+      #             uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev clang file nano aria2"
   # CONFIG_FILE is the name of your own config files for compiling, you should upload these files into the root 
   # directory of your workflow repo.
   CONFIG_FILE: ssr/v24/ucfxp.config
@@ -74,12 +74,27 @@ jobs:
       cache-hit: ${{ steps.cache-hash.outputs.cache-hit }}
 
     steps:
-      git clone --depth 1 --branch $REPO_BRANCH --single-branch $REPO_URL ./
- 
-        env:
-          REPO_BRANCH: ${{ env.REPO_BRANCH }}        # 保留原始环境变量
-          REPO_URL: ${{ env.REPO_URL }}              # 保留原始环境变量
-build:
+      - name: Get Commit Hash
+        id: get-hash
+        run: |
+          git clone --depth 1 --branch $REPO_BRANCH --single-branch $REPO_URL ./
+          echo "commit-hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Compare Commit Hash
+        id: cache-hash
+        uses: actions/cache@v3
+        with:
+          path: .${{ env.REPO_NAME }}-${{ env.REPO_BRANCH }}-commit-hash
+          key: HEAD-${{ steps.get-hash.outputs.commit-hash }}
+
+      - name: Save New Commit Hash
+        if: steps.cache-hash.outputs.cache-hit != 'true'
+        run: |
+          echo ${{ steps.get-hash.outputs.commit-hash }} | 
+            tee .$REPO_NAME-$REPO_BRANCH-commit-hash
+
+
+  build:
     name: Build firmware
     runs-on: ubuntu-22.04
     needs: check
@@ -89,7 +104,7 @@ build:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Free disk space
         uses: jlumbroso/free-disk-space@main
@@ -101,22 +116,14 @@ build:
           large-packages: true
           docker-images: true
           swap-storage: false
-# 启用 BBR 的核心配置
-      - name: Enable BBR
-        run: |
-           echo "CONFIG_PACKAGE_kmod-tcp-bbr=y" >> ${{ env.CONFIG_FILE }}
-           echo "CONFIG_DEFAULT_TCP_CONG=\"bbr\"" >> ${{ env.CONFIG_FILE }}
-          
-           echo "CONFIG_PACKAGE_kmod-sched-core=y" >> ${{ env.CONFIG_FILE }}
-           echo "CONFIG_PACKAGE_kmod-sched-fq_codel=y" >> ${{ env.CONFIG_FILE }}
+
       - name: Initialization environment
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
           sudo rm -rf /etc/apt/sources.list.d/*
           sudo -E apt-get -qq update
-          #sudo -E apt-get -qq install ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libpython3-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pyelftools python3-setuptools qemu-utils rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
-          sudo -E apt-get -qq install $BUILD_DEPENDS
+          sudo -E apt-get -qq install ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libpython3-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pyelftools python3-setuptools qemu-utils rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
           sudo timedatectl set-timezone $TIME_ZONE
@@ -238,7 +245,7 @@ build:
           version=$(git describe --tags || echo "unknown-version") # 提取版本信息，使用 git describe
           date=$(date +"%Y%m%d") # 提取当前日期
           cd $GITHUB_WORKSPACE #
-          echo "release_tag=${date}-$CONFIG_FILE-${version}" >> $GITHUB_OUTPUT # 设置 release_tag
+          echo "release_tag=${date}_${version}_$CONFIG_FILE" >> $GITHUB_OUTPUT # 设置 release_tag
           touch release.txt
           echo "Build from $REPO_URL $REPO_BRANCH" >> release.txt
           [ $COWTRANSFER_FIRMWARE = true -o $WETRANSFER_FIRMWARE = true ] && echo 'Products transfer:' >> release.txt

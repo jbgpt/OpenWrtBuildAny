@@ -38,7 +38,7 @@ env:
   # REPO means the OpenWrt repo you want to build from in this workflow. 
   # You can modify the REPO_NAME to any name you want, but remember not to let it have the same name in 
   # other workflows.
-  FEEDS_CONF: ssr/v24/v10/feeds.conf.default
+  FEEDS_CONF: ssr/v24/v24.1/feeds.conf.default
   REPO_NAME: openwrt-name
   REPO_URL: https://github.com/openwrt/openwrt.git
   REPO_BRANCH: openwrt-24.10
@@ -54,7 +54,7 @@ env:
     wget xmlto xxd zlib1g-dev clang file nano aria2
   # CONFIG_FILE is the name of your own config files for compiling, you should upload these files into the root 
   # directory of your workflow repo.
-  CONFIG_FILE: ssr/v24/v10/smartfile.config
+  CONFIG_FILE: ssr/v24/v24.1/smartfile.config
   # CUSTOM_SCRIPT_1 is the name of extra bash script you want to execute before feeds update&install.
   # CUSTOM_SCRIPT_2 is the name of extra bash script you want to execute after feeds update&install.
   # You can modify the initial settings of your firmware through these two scripts. If this is what you need,
@@ -164,9 +164,9 @@ jobs:
       - name: Clone repository with all tags
         run: |
          # git clone --depth 1 --no-single-branch https://github.com/openwrt/openwrt.git
-          # cd openwrt
-          # git fetch --tags
-          # git checkout tags/v24.10.1
+          cd openwrt
+          git fetch --tags
+          git checkout tags/v24.10.1
       - name: Run custom-script-1
         run: |
           [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default

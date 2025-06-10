@@ -52,14 +52,14 @@ env:
 jobs:
   build:
     name: Build firmware
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     if: github.event.inputs.force-build == 'true'
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Free disk space
         uses: jlumbroso/free-disk-space@main
